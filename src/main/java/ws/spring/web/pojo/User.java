@@ -1,4 +1,4 @@
-package ws.spring.web.pojo.dto;
+package ws.spring.web.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

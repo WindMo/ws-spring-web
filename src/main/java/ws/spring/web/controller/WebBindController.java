@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ws.spring.web.pojo.dto.City;
-import ws.spring.web.pojo.dto.User;
+import ws.spring.web.pojo.City;
+import ws.spring.web.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
 
