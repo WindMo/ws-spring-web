@@ -30,6 +30,7 @@ public class WebBindControllerAdvice {
     @InitBinder
     public void initBinder(WebDataBinder binder) {
 
+
         log.info("initBinder - params: binder");
     }
 
