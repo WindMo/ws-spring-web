@@ -1,8 +1,11 @@
 package ws.java.bean;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import ws.spring.web.pojo.User;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -18,14 +21,51 @@ import java.beans.PropertyDescriptor;
 @Slf4j
 public class IntrospectorTests {
 
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    public static class JavaPojo {
+
+        private String name;
+        private String desc;
+        private String email;
+        private boolean ok;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class OffbeatPojo {
+
+        private boolean need;
+
+        public boolean getNeed() {
+            return need;
+        }
+
+        public void setNeed(boolean need) {
+            this.need = need;
+        }
+    }
+
     @Test
     public void beanInfoTest() throws IntrospectionException {
 
-        BeanInfo beanInfo = Introspector.getBeanInfo(User.class);
+        BeanInfo beanInfo = Introspector.getBeanInfo(JavaPojo.class);
         PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor pd : pds) {
 
             printPropertyDescriptor(pd);
+            log.info("------------------------------------");
+        }
+
+        log.info("\n");
+        BeanInfo beanInfo2 = Introspector.getBeanInfo(OffbeatPojo.class);
+        PropertyDescriptor[] pds2 = beanInfo2.getPropertyDescriptors();
+        for (PropertyDescriptor pd2 : pds2) {
+
+            printPropertyDescriptor(pd2);
             log.info("------------------------------------");
         }
     }
@@ -33,7 +73,7 @@ public class IntrospectorTests {
     @Test
     public void propertyDescriptorTest() throws IntrospectionException {
 
-        PropertyDescriptor pd = new PropertyDescriptor("name",User.class);
+        PropertyDescriptor pd = new PropertyDescriptor("name",JavaPojo.class);
         printPropertyDescriptor(pd);
 
     }

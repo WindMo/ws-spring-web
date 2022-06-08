@@ -14,6 +14,7 @@ import ws.spring.web.pojo.User;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * SpringWeb参数绑定示例
@@ -33,10 +34,11 @@ public class WebBindController {
 
     /**
      * 根据参数的名称前缀绑定
+     *  <pre>/bind/param-prefix?user.name=tom&user.desc=tom cat&user.email=123@qq.com&city.name=北京&city.desc=中国首都</pre>
      * @param user user
      * @param city city
      * @return String
-     * @see #initBinderForParamPrefix(WebDataBinder)
+     * @see #setFieldDefaultPrefix(WebDataBinder)
      */
     @GetMapping("/param-prefix")
     public String paramPrefix(User user, City city) {
@@ -45,6 +47,40 @@ public class WebBindController {
         return toString(user, city);
     }
 
+    /**
+     * 设置寻找的参数的名称前缀
+     * @param binder binder
+     */
+    @InitBinder({"user","city"})
+    public void setFieldDefaultPrefix(WebDataBinder binder) {
+
+        needInitBinder("/bind/param-prefix",() -> {
+            String objectName = binder.getObjectName();
+            log.info("initBinderForParamPrefix - objectName: {}",objectName);
+            if ("user".equals(objectName)) {
+                binder.setFieldDefaultPrefix("user.");
+            } else if ("city".equals(objectName)) {
+                binder.setFieldDefaultPrefix("city.");
+            }
+        });
+    }
+
+    @GetMapping("/allowed-fields")
+    public String allowedFields(User user, City city) {
+
+        log.info("user: {}, city: {}",user,city);
+        return toString(user, city);
+    }
+
+    @InitBinder({"user","city"})
+    public void setAllowedFields(WebDataBinder binder) {
+
+        needInitBinder("/allowed-fields",() -> {
+            String objectName = binder.getObjectName();
+            log.info("initBinderForParamPrefix - objectName: {}",objectName);
+            binder.setAllowedFields();
+        });
+    }
 
 
 //    @GetMapping("/form-mdoel")
@@ -54,33 +90,18 @@ public class WebBindController {
 //    }
 
 
-    /**
-     * 设置寻找的参数的名称前缀
-     * @param binder binder
-     */
-    @InitBinder({"user","city"})
-    public void initBinderForParamPrefix(WebDataBinder binder) {
 
-        if (needInitBinder("/bind/param-prefix")) {
-
-            String objectName = binder.getObjectName();
-            log.info("initBinderForParamPrefix - objectName: {}",objectName);
-            if ("user".equals(objectName)) {
-                binder.setFieldDefaultPrefix("user.");
-            } else if ("city".equals(objectName)) {
-                binder.setFieldDefaultPrefix("city.");
-            }
-        }
-    }
 
     //--------------------
     // helper methods
     //--------------------
 
-    private boolean needInitBinder(String expectServletPath) {
+    private void needInitBinder(String expectServletPath, Runnable init) {
 
         String servletPath = request.getServletPath();
-        return servletPath.equals(expectServletPath);
+        if (servletPath.equals(expectServletPath)) {
+            init.run();
+        }
     }
 
     private static String toString(Object... os) {
