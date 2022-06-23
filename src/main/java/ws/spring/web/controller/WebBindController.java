@@ -65,20 +65,37 @@ public class WebBindController {
         });
     }
 
+    /**
+     * 设置允许被绑定的字段，
+     * 只允许绑定{@linkplain User#setName(String) name字段}，忽略其它字段的绑定
+     *
+     * @param user
+     * @return
+     * @see #setAllowedFields(WebDataBinder)
+     */
     @GetMapping("/allowed-fields")
-    public String allowedFields(User user, City city) {
+    public String allowedFields(User user) {
 
-        log.info("user: {}, city: {}",user,city);
-        return toString(user, city);
+        log.info("user: {}",user);
+        return toString(user);
     }
 
-    @InitBinder({"user","city"})
+    /**
+     * {@link WebDataBinder#setAllowedFields(String...)}设置允许被绑定的字段，支持通配符匹配
+     *
+     * @param binder
+     */
+    @InitBinder({"user"})
     public void setAllowedFields(WebDataBinder binder) {
 
-        needInitBinder("/allowed-fields",() -> {
+        needInitBinder("/bind/allowed-fields",() -> {
             String objectName = binder.getObjectName();
             log.info("initBinderForParamPrefix - objectName: {}",objectName);
-            binder.setAllowedFields();
+            Object target = binder.getTarget();
+            if (target instanceof User) {
+
+                binder.setAllowedFields("name");
+            }
         });
     }
 
@@ -98,13 +115,12 @@ public class WebBindController {
 
     private void needInitBinder(String expectServletPath, Runnable init) {
 
-        String servletPath = request.getServletPath();
-        if (servletPath.equals(expectServletPath)) {
+        if (request.getServletPath().equals(expectServletPath) || (request.getPathInfo() != null && request.getPathInfo().equals(expectServletPath))) {
             init.run();
         }
     }
 
-    private static String toString(Object... os) {
+    protected static String toString(Object... os) {
 
         return Arrays.toString(os);
     }

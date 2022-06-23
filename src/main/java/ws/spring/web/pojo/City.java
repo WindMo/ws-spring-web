@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode
 public class City{
 
     private String name;

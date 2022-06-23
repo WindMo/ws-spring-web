@@ -1,9 +1,6 @@
 package ws.spring.web.pojo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author WindShadow
@@ -14,6 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode
 public class User {
 
     private String name;
