@@ -99,6 +99,40 @@ public class WebBindController {
         });
     }
 
+    /**
+     * 设置忽略绑定的字段，
+     * 忽略{@linkplain User#setName(String) name字段}的绑定
+     *
+     * @param user
+     * @return
+     * @see #setDisallowedFields(WebDataBinder)
+     */
+    @GetMapping("/disallowed-fields")
+    public String disallowedFields(User user) {
+
+        log.info("user: {}",user);
+        return toString(user);
+    }
+
+    /**
+     * {@link WebDataBinder#setAllowedFields(String...)}设置允许被绑定的字段，支持通配符匹配
+     *
+     * @param binder
+     */
+    @InitBinder({"user"})
+    public void setDisallowedFields(WebDataBinder binder) {
+
+        needInitBinder("/bind/disallowed-fields",() -> {
+            String objectName = binder.getObjectName();
+            log.info("initBinderForParamPrefix - objectName: {}",objectName);
+            Object target = binder.getTarget();
+            if (target instanceof User) {
+
+                binder.setDisallowedFields("name");
+            }
+        });
+    }
+
 
 //    @GetMapping("/form-mdoel")
 //    public String formModel() {

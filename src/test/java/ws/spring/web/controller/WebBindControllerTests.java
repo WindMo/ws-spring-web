@@ -53,4 +53,19 @@ public class WebBindControllerTests extends SpringWebApplicationTests {
         user.setEmail(null);
         Assertions.assertEquals(WebBindController.toString(user), content);
     }
+
+    @Test
+    void disallowedFieldsTest(@Autowired MockMvc mvc) throws Exception {
+
+        User user = new User("tom", "tom ca", "123@qq.com");
+        String content = mvc.perform(get("/bind/disallowed-fields")
+                .param("name", user.getName())
+                .param("desc", user.getDesc())
+                .param("email", user.getEmail()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        user.setName(null);
+        Assertions.assertEquals(WebBindController.toString(user), content);
+    }
 }
