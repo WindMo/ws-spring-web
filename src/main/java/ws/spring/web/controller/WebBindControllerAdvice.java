@@ -1,12 +1,14 @@
 package ws.spring.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.Formatter;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ws.spring.web.annotation.FormModel;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,5 +58,20 @@ public class WebBindControllerAdvice {
     public void initBinder(WebDataBinder binder, HttpServletRequest request, HttpServletResponse response) {
 
         log.info("initBinder - params: binder,request,response");
+    }
+
+    // ~ 扩展
+    // =====================================================================================
+
+    /**
+     *
+     * @param binder
+     * @see FormModel
+     */
+    @InitBinder
+    public void initBinderForFormModel(WebDataBinder binder) {
+
+        log.info("initBinder - params: initBinderForFormModel");
+//        binder.get
     }
 }

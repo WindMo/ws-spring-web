@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ws.spring.web.SpringWebApplicationTests;
 import ws.spring.web.pojo.City;
 import ws.spring.web.pojo.User;
+import ws.spring.web.util.ObjectUtils;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -35,7 +36,7 @@ public class WebBindControllerTests extends SpringWebApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        Assertions.assertEquals(WebBindController.toString(user,city), content);
+        Assertions.assertEquals(ObjectUtils.toString(user,city), content);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class WebBindControllerTests extends SpringWebApplicationTests {
 
         user.setDesc(null);
         user.setEmail(null);
-        Assertions.assertEquals(WebBindController.toString(user), content);
+        Assertions.assertEquals(ObjectUtils.toString(user), content);
     }
 
     @Test
@@ -66,6 +67,6 @@ public class WebBindControllerTests extends SpringWebApplicationTests {
                 .andReturn().getResponse().getContentAsString();
 
         user.setName(null);
-        Assertions.assertEquals(WebBindController.toString(user), content);
+        Assertions.assertEquals(ObjectUtils.toString(user), content);
     }
 }

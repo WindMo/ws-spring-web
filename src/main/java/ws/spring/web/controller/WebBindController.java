@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ws.spring.web.pojo.City;
 import ws.spring.web.pojo.User;
+import ws.spring.web.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class WebBindController {
     public String paramPrefix(User user, City city) {
 
         log.info("user: {}, city: {}",user,city);
-        return toString(user, city);
+        return ObjectUtils.toString(user, city);
     }
 
     /**
@@ -77,7 +78,7 @@ public class WebBindController {
     public String allowedFields(User user) {
 
         log.info("user: {}",user);
-        return toString(user);
+        return ObjectUtils.toString(user);
     }
 
     /**
@@ -111,7 +112,7 @@ public class WebBindController {
     public String disallowedFields(User user) {
 
         log.info("user: {}",user);
-        return toString(user);
+        return ObjectUtils.toString(user);
     }
 
     /**
@@ -152,10 +153,5 @@ public class WebBindController {
         if (request.getServletPath().equals(expectServletPath) || (request.getPathInfo() != null && request.getPathInfo().equals(expectServletPath))) {
             init.run();
         }
-    }
-
-    protected static String toString(Object... os) {
-
-        return Arrays.toString(os);
     }
 }
