@@ -19,10 +19,15 @@ import java.util.Map;
 public class FormModelResolver2 extends AbstractNamedValueMethodArgumentResolver {
 
     @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.hasParameterAnnotation(FormModel.class);
+    }
+
+    @Override
     protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
 
         FormModel formModel = parameter.getParameterAnnotation(FormModel.class);
-        Assert.notNull(formModel,"Not found <" + FormModel.class.getName() + "> annotation on the [" + parameter + "]");
+        Assert.state(formModel != null,"No FormModel annotation");
         // 获取注解中的指定参数名称的前缀
         String annotationParamName = formModel.prefix();
         // 获取控制层方法参数的名称，即源码中函数形参参数名
@@ -81,10 +86,5 @@ public class FormModelResolver2 extends AbstractNamedValueMethodArgumentResolver
         // >其它      未知
         binder.bind(pvs);
         return webData;
-    }
-
-    @Override
-    public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(FormModel.class);
     }
 }

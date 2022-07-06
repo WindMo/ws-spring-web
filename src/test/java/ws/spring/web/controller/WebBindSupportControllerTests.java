@@ -42,7 +42,7 @@ public class WebBindSupportControllerTests extends SpringWebApplicationTests {
     @Test
     void formModelTest(@Autowired MockMvc mvc) throws Exception {
 
-        User user = new User("tom", "tom ca", "123@qq.com");
+        User user = new User("tom", "tom ca", "123qq.com");
         City city = new City("北京", "中国首都");
         String content = mvc.perform(get("/support/from-model")
                 .param("user.name", user.getName())

@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * @author WindShadow
@@ -27,31 +29,13 @@ public class TempTest {
 
     public static void main(String[] args) {
 
+        if (System.out.append("A") == null) {
 
-        Ac ac = new Ac();
-        ac.setName("name");
-        int times = 10 * 10000;
-//        int times = 10;
-        exeTime(ac::getName,times);
-        Method method = ReflectionUtils.findMethod(Ac.class, "getName");
-        assert method != null;
-        exeTime(() -> {
+            System.out.print("A");
+        } else {
 
-            try {
-                method.invoke(ac);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        },times);
-    }
-
-    static void exeTime(Runnable runnable, int times) {
-
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < times; i++) {
-            runnable.run();
+            System.out.print("B");
         }
-        long end = System.currentTimeMillis();
-        System.out.println(new SimpleDateFormat("HH:mm:ss.SSS").format(new Date(end - start)));
     }
+
 }
