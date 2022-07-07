@@ -13,10 +13,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import ws.spring.web.annotation.FormModel;
 
 /**
+ * {@link FormModel}注解参数解析器
+ *
  * @author WindShadow
  * @version 2020/9/19.
- * FormModel注解参数解析器
- * 存在的问题，支持转换，但没有验证效果
  */
 @Slf4j
 public class FormModelResolver implements HandlerMethodArgumentResolver {
@@ -31,7 +31,7 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
 
         FormModel formModel = methodParameter.getParameterAnnotation(FormModel.class);
-        Assert.notNull(formModel,"该方法的形参并未被" + FormModel.class + "注解修饰");
+        Assert.state(formModel != null,"No FormModel annotation");
         // 创建web数据绑定器及参数表
         if (webDataBinderFactory != null) {
 
@@ -57,5 +57,4 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
         }
         return null;
     }
-
 }
