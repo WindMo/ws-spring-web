@@ -46,4 +46,18 @@ public class WebBindSupportController {
         log.info("user: {}, city: {}",u,c);
         return ObjectUtils.toString(u, c);
     }
+
+    /**
+     * 通过FormModel指定参数前缀，据参数的名称前缀绑定，且进行验证
+     * <pre>/bind/param-prefix?user.name=tom&user.desc=tom cat&user.email=123qq.com&city.name=北京&city.desc=中国首都</pre>
+     * @param u user
+     * @param c city
+     * @return String
+     */
+    @GetMapping("/from-model/validate")
+    public String formModelValidate(@FormModel(value = "user", validate = true) User u, @FormModel("city") City c) {
+
+        log.info("user: {}, city: {}",u,c);
+        return ObjectUtils.toString(u, c);
+    }
 }

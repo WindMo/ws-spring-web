@@ -23,4 +23,8 @@ public @interface FormModel {
     String separator() default ".";
 
     boolean required() default false;
+
+    boolean validate() default false;
+
+    Class<?>[] groups() default {};
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -52,6 +53,11 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
             binder.setFieldDefaultPrefix(fieldPrefix);
             MutablePropertyValues pvs = new MutablePropertyValues(nativeWebRequest.getParameterMap());
             binder.bind(pvs);
+            if (formModel.validate()) {
+
+                binder.validate((Object[]) formModel.groups());
+                binder.close();
+            }
             return webData;
         }
         return null;

@@ -42,7 +42,7 @@ public class WebBindSupportControllerTests extends SpringWebApplicationTests {
     @Test
     void formModelTest(@Autowired MockMvc mvc) throws Exception {
 
-        User user = new User("tom", "tom ca", "123qq.com");
+        User user = new User("tom", "tom ca", "123@qq.com");
         City city = new City("北京", "中国首都");
         String content = mvc.perform(get("/support/from-model")
                 .param("user.name", user.getName())
@@ -54,5 +54,20 @@ public class WebBindSupportControllerTests extends SpringWebApplicationTests {
                 .andReturn().getResponse().getContentAsString();
 
         Assertions.assertEquals(ObjectUtils.toString(user,city), content);
+    }
+
+    @Test
+    void formModelValidateTest(@Autowired MockMvc mvc) throws Exception {
+
+        User user = new User("tom", "tom ca", "123qq.com");
+        City city = new City("北京", "中国首都");
+        mvc.perform(get("/support/from-model/validate")
+                .param("user.name", user.getName())
+                .param("user.desc", user.getDesc())
+                .param("user.email", user.getEmail())
+                .param("city.name", city.getName())
+                .param("city.desc", city.getDesc()))
+                .andExpect(status().isBadRequest());
+
     }
 }
