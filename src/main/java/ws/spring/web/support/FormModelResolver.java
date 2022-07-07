@@ -1,6 +1,5 @@
 package ws.spring.web.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
@@ -18,7 +17,7 @@ import ws.spring.web.annotation.FormModel;
  * @author WindShadow
  * @version 2020/9/19.
  */
-@Slf4j
+
 public class FormModelResolver implements HandlerMethodArgumentResolver {
 
     @Override
