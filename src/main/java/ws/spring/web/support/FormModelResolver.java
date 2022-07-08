@@ -3,6 +3,7 @@ package ws.spring.web.support;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -47,6 +48,8 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
             // 最终的属性前缀
             String fieldPrefix = prefix + separator;
 
+            Assert.state(ClassUtils.hasConstructor(paramClass),
+                    () -> "The class [" + paramClass.getName() + "] has no default empty parameter constructor");
             Object webData = paramClass.newInstance();
             WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,webData,paramName);
             binder.setFieldDefaultPrefix(fieldPrefix);
