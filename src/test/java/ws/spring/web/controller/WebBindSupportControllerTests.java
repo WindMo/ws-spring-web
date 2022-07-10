@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.NestedServletException;
 import ws.spring.web.SpringWebApplicationTests;
 import ws.spring.web.pojo.City;
 import ws.spring.web.pojo.User;
@@ -68,6 +69,28 @@ public class WebBindSupportControllerTests extends SpringWebApplicationTests {
                 .param("city.name", city.getName())
                 .param("city.desc", city.getDesc()))
                 .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void formModelOfStringTest(@Autowired MockMvc mvc) throws Exception {
+
+        String str = "abcdefg";
+        Assertions.assertThrows(NestedServletException.class,
+                () -> mvc.perform(get("/support/from-model/string")
+                        .param("user.name", str)));
+
+    }
+
+    @Test
+    void formModelOfStMapTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/map")
+                .param("user.id", "123456")
+                .param("user.age", "18"));
+//        Assertions.assertThrows(NestedServletException.class,
+//                () -> mvc.perform(get("/support/from-model/map")
+//                        .param("user.name", str)));
 
     }
 }

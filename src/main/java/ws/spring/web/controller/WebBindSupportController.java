@@ -9,6 +9,8 @@ import ws.spring.web.pojo.City;
 import ws.spring.web.pojo.User;
 import ws.spring.web.util.ObjectUtils;
 
+import java.util.Map;
+
 /**
  * @author WindShadow
  * @version 2022-06-25.
@@ -59,5 +61,19 @@ public class WebBindSupportController {
 
         log.info("user: {}, city: {}",u,c);
         return ObjectUtils.toString(u, c);
+    }
+
+    @GetMapping("/from-model/string")
+    public String formModelOfString(@FormModel("user") String str) {
+
+        log.info("str: {}",str);
+        return ObjectUtils.toString(str);
+    }
+
+    @GetMapping("/from-model/map")
+    public String formModelOfMap(@FormModel("user") Map<String, Integer> map) {
+
+        log.info("map: {}",map);
+        return ObjectUtils.toString(map);
     }
 }
