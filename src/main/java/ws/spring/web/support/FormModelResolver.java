@@ -13,8 +13,11 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import ws.spring.web.annotation.FormModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -50,6 +53,7 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
 
             // 获取控制层方法参数的名称，即源码中函数形参参数名
             String paramName = methodParameter.getParameterName();
+            Assert.state(paramName != null, "ParameterName is null");
             // 最终的属性前缀
             String paramPrefix = obtainParamPrefix(formModel, paramName);
 
@@ -58,7 +62,14 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
                 // TODO
             } else if (paramTypeDesc.isCollection()) {
 
-                // TODO
+                TypeDescriptor elementTypeDesc = paramTypeDesc.getElementTypeDescriptor();
+                Class<?> elementTypeClass = elementTypeDesc == null ? null : elementTypeDesc.getType();
+                WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,null,paramName);
+                List<Object> list = new ArrayList<>();
+                this.<Object>filterParameterMap(nativeWebRequest, paramPrefix,
+                        value -> binder.convertIfNecessary(value, elementTypeClass, elementTypeDesc),
+                        (k,v) -> list.add(v));
+                return list;
             } else if (paramTypeDesc.isMap()) {
 
                 TypeDescriptor mapKeyTypeDesc = paramTypeDesc.getMapKeyTypeDescriptor();
@@ -67,10 +78,14 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
                             "The key of the map type modified by FormModel must be a String or its superclass");
                 }
                 TypeDescriptor mapValueTypeDesc = paramTypeDesc.getMapValueTypeDescriptor();
-                Class<?> mapValueClass = mapValueTypeDesc == null ? Object.class : mapValueTypeDesc.getType();
+                Class<?> mapValueClass = mapValueTypeDesc == null ? null : mapValueTypeDesc.getType();
                 WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,null,paramName);
-                return this.<Object>filterParameterMap(nativeWebRequest, paramPrefix,
-                        value -> binder.convertIfNecessary(value, mapValueClass));
+
+                Map<String, Object> result = new HashMap<>();
+                this.<Object>filterParameterMap(nativeWebRequest, paramPrefix,
+                        value -> binder.convertIfNecessary(value, mapValueClass, mapValueTypeDesc),
+                        result::put);
+                return result;
             } else {
 
                 Assert.state(ClassUtils.hasConstructor(paramClass),
@@ -104,9 +119,8 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
         return prefix + separator;
     }
 
-    private <T> Map<String, T> filterParameterMap(NativeWebRequest nativeWebRequest, String paramPrefix, Function<Object, T> converter) {
+    private <T> void filterParameterMap(NativeWebRequest nativeWebRequest, String paramPrefix, Function<Object, T> converter, BiConsumer<String, T> selector) {
 
-        Map<String, T> result = new HashMap<>();
         Map<String, String[]> parameterMap = nativeWebRequest.getParameterMap();
         parameterMap.forEach((k,v) -> {
 
@@ -117,10 +131,9 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
                 if (resultValue != null) {
 
                     String resultKey = k.substring(paramPrefix.length());
-                    result.put(resultKey, resultValue);
+                    selector.accept(resultKey, resultValue);
                 }
             }
         });
-        return result;
     }
 }

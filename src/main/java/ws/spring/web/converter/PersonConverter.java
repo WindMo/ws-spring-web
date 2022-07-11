@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ws.spring.web.pojo.Person;
 
 /**
+ * "Tom-18" -> Person("Tom", 18)
+ *
  * @author WindShadow
  * @version 2021-2-28.
  */
@@ -20,14 +22,14 @@ public class PersonConverter implements Converter<String, Person> {
      */
     @Override
     public Person convert(String source) {
-        String[] params = source.split(",");
+        String[] params = source.split("-");
         if (params.length == 2) {
 
             String name = params[0];
             Integer age = Integer.valueOf(params[1]);
             return new Person(name,age);
         }else {
-            throw new IllegalArgumentException("Unexpected format, example: \"Tom,18\" -> Person(\"Tom\", 18)");
+            throw new IllegalArgumentException("Unexpected format, example: \"Tom-18\" -> Person(\"Tom\", 18)");
         }
     }
 }

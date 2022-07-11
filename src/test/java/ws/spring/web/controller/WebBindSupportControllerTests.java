@@ -79,18 +79,67 @@ public class WebBindSupportControllerTests extends SpringWebApplicationTests {
         Assertions.assertThrows(NestedServletException.class,
                 () -> mvc.perform(get("/support/from-model/string")
                         .param("user.name", str)));
+    }
 
+    // ~ Map 系列
+    // =====================================================================================
+
+    @Test
+    void formModelOfMapStringTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/map/string")
+                .param("user.id", "id-xxx")
+                .param("user.name-xxx", "18"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void formModelOfStMapTest(@Autowired MockMvc mvc) throws Exception {
+    void formModelOfMapIntegerTest(@Autowired MockMvc mvc) throws Exception {
 
-        mvc.perform(get("/support/from-model/map")
+        mvc.perform(get("/support/from-model/map/integer")
                 .param("user.id", "123456")
-                .param("user.age", "18"));
-//        Assertions.assertThrows(NestedServletException.class,
-//                () -> mvc.perform(get("/support/from-model/map")
-//                        .param("user.name", str)));
-
+                .param("user.age", "18"))
+                .andExpect(status().isOk());
     }
+
+    @Test
+    void formModelOfMapObjectTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/map/object")
+                .param("user.id", "id-xxx")
+                .param("user.age", "18"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void formModelOfMapPojoTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/map/pojo")
+                .param("user.tom", "tom-18")
+                .param("user.jerry", "jerry-17"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void formModelOfMapStringUnkonwTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/map/string/unknow")
+                .param("user.id", "id-xxx")
+                .param("user.age", "18")
+                .param("user.name", "name-xxx"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void formModelOfMapUnkonwUnkonwTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/map/unknow/unknow")
+                .param("user.id", "id-xxx")
+                .param("user.age", "18")
+                .param("user.name", "name-xxx"))
+                .andExpect(status().isOk());
+    }
+
+    // ~ 集合系列
+    // =====================================================================================
 }
