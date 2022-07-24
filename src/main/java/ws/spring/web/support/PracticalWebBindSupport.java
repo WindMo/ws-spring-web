@@ -15,7 +15,7 @@ public class PracticalWebBindSupport implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 
-        resolvers.add(new FormModelResolver());
+        resolvers.add(new FormModelResolverDev());
 //        resolvers.add(new FormModelResolver2());
     }
 }

@@ -142,4 +142,14 @@ public class WebBindSupportControllerTests extends SpringWebApplicationTests {
 
     // ~ 集合系列
     // =====================================================================================
+
+    @Test
+    void formModelOfListStringTest(@Autowired MockMvc mvc) throws Exception {
+
+        mvc.perform(get("/support/from-model/list/string")
+                .param("user.id", "id-xxx")
+                .param("user.age", "18")
+                .param("user.name", "name-xxx"))
+                .andExpect(status().isOk());
+    }
 }

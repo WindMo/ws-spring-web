@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * {@link FormModel}注解参数解析器
@@ -39,7 +38,8 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer,
+                                  NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
 
         FormModel formModel = methodParameter.getParameterAnnotation(FormModel.class);
         Assert.state(formModel != null,"No FormModel annotation");
@@ -57,51 +57,19 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
             // 最终的属性前缀
             String paramPrefix = obtainParamPrefix(formModel, paramName);
 
-            if (paramTypeDesc.isArray()) {
+            Assert.state(ClassUtils.hasConstructor(paramClass),
+                    () -> "The class [" + paramClass.getName() + "] has no default empty parameter constructor");
+            Object webData = paramClass.newInstance();
+            WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,webData,paramName);
+            binder.setFieldDefaultPrefix(paramPrefix);
+            MutablePropertyValues pvs = new MutablePropertyValues(nativeWebRequest.getParameterMap());
+            binder.bind(pvs);
+            if (formModel.validate()) {
 
-                // TODO
-            } else if (paramTypeDesc.isCollection()) {
-
-                TypeDescriptor elementTypeDesc = paramTypeDesc.getElementTypeDescriptor();
-                Class<?> elementTypeClass = elementTypeDesc == null ? null : elementTypeDesc.getType();
-                WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,null,paramName);
-                List<Object> list = new ArrayList<>();
-                this.<Object>filterParameterMap(nativeWebRequest, paramPrefix,
-                        value -> binder.convertIfNecessary(value, elementTypeClass, elementTypeDesc),
-                        (k,v) -> list.add(v));
-                return list;
-            } else if (paramTypeDesc.isMap()) {
-
-                TypeDescriptor mapKeyTypeDesc = paramTypeDesc.getMapKeyTypeDescriptor();
-                if (mapKeyTypeDesc != null) {
-                    Assert.state(STRING_TYPE.isAssignableTo(mapKeyTypeDesc),
-                            "The key of the map type modified by FormModel must be a String or its superclass");
-                }
-                TypeDescriptor mapValueTypeDesc = paramTypeDesc.getMapValueTypeDescriptor();
-                Class<?> mapValueClass = mapValueTypeDesc == null ? null : mapValueTypeDesc.getType();
-                WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,null,paramName);
-
-                Map<String, Object> result = new HashMap<>();
-                this.<Object>filterParameterMap(nativeWebRequest, paramPrefix,
-                        value -> binder.convertIfNecessary(value, mapValueClass, mapValueTypeDesc),
-                        result::put);
-                return result;
-            } else {
-
-                Assert.state(ClassUtils.hasConstructor(paramClass),
-                        () -> "The class [" + paramClass.getName() + "] has no default empty parameter constructor");
-                Object webData = paramClass.newInstance();
-                WebDataBinder binder = webDataBinderFactory.createBinder(nativeWebRequest,webData,paramName);
-                binder.setFieldDefaultPrefix(paramPrefix);
-                MutablePropertyValues pvs = new MutablePropertyValues(nativeWebRequest.getParameterMap());
-                binder.bind(pvs);
-                if (formModel.validate()) {
-
-                    binder.validate((Object[]) formModel.groups());
-                    binder.close();
-                }
-                return webData;
+                binder.validate((Object[]) formModel.groups());
+                binder.close();
             }
+            return webData;
         }
         return null;
     }
@@ -117,23 +85,5 @@ public class FormModelResolver implements HandlerMethodArgumentResolver {
         String separator = formModel.separator();
         // 最终的属性前缀
         return prefix + separator;
-    }
-
-    private <T> void filterParameterMap(NativeWebRequest nativeWebRequest, String paramPrefix, Function<Object, T> converter, BiConsumer<String, T> selector) {
-
-        Map<String, String[]> parameterMap = nativeWebRequest.getParameterMap();
-        parameterMap.forEach((k,v) -> {
-
-            if (k.startsWith(paramPrefix)) {
-
-                Object value = v.length == 1 ? v[0] : v;
-                T resultValue = converter.apply(value);
-                if (resultValue != null) {
-
-                    String resultKey = k.substring(paramPrefix.length());
-                    selector.accept(resultKey, resultValue);
-                }
-            }
-        });
     }
 }

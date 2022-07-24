@@ -1,9 +1,7 @@
 package ws.spring.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ws.spring.web.annotation.FormModel;
@@ -12,6 +10,7 @@ import ws.spring.web.pojo.Person;
 import ws.spring.web.pojo.User;
 import ws.spring.web.util.ObjectUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -108,14 +107,14 @@ public class WebBindSupportController {
     }
 
     @GetMapping("/from-model/map/string/unknow")
-    public String formModelOfMapStringUnkonw(@FormModel("user") Map<String, ?> map) {
+    public String formModelOfMapStringUnknow(@FormModel("user") Map<String, ?> map) {
 
         log.info("map: {}",map);
         return ObjectUtils.toString(map);
     }
 
     @GetMapping("/from-model/map/unknow/unknow")
-    public String formModelOfMapUnkonwUnkonw(@FormModel("user") Map<?, ?> map) {
+    public String formModelOfMapUnknowUnknow(@FormModel("user") Map<?, ?> map) {
 
         log.info("map: {}",map);
         return ObjectUtils.toString(map);
