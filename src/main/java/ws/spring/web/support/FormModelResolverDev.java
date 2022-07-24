@@ -21,12 +21,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * {@link FormModel}注解参数解析器
+ * {@link FormModel}注解参数解析器 扩展类型
  *
  * @author WindShadow
  * @version 2020/9/19.
+ * @deprecated 泛型在运行时获取不了
  */
 
+@Deprecated
 public class FormModelResolverDev implements HandlerMethodArgumentResolver {
 
     private static final TypeDescriptor STRING_TYPE = TypeDescriptor.valueOf(String.class);
